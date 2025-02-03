@@ -1,25 +1,22 @@
-from langchain_openai import ChatOpenAI
-from os import getenv
-from dotenv import load_dotenv
+import langchain_helper as lch
+import streamlit as st
 
-load_dotenv()
-MODEL = "meta-llama/llama-3.2-3b-instruct:free"
+st.title("Pet Name Generator")
 
+animal_type = st.sidebar.selectbox("What is your pet?", ["Dog", "Cat", "Bird", "Fish"])
 
-def generate_pet_name():
-    llm = ChatOpenAI(
-        openai_api_key=getenv("OPENROUTER_API_KEY"),
-        openai_api_base=getenv("OPENROUTER_BASE_URL"),
-        model=MODEL,
-        temperature=1,
-    )
+if animal_type == "Cat":
+    pet_color = st.sidebar.text_area(label="What color is your cat?", max_chars=15)
 
-    response = llm.invoke(
-        "I have a dog pet and I want a cool name for it. Suggest me five cool names."
-    )
+if animal_type == "Dog":
+    pet_color = st.sidebar.text_area(label="What color is your dog?", max_chars=15)
 
-    return response.content
+if animal_type == "Bird":
+    pet_color = st.sidebar.text_area(label="What color is your bird?", max_chars=15)
 
+if animal_type == "Fish":
+    pet_color = st.sidebar.text_area(label="What color is your fish?", max_chars=15)
 
-if __name__ == "__main__":
-    print(generate_pet_name())
+if pet_color:
+    response = lch.generate_pet_name(animal_type, pet_color)
+    st.text(response["pet_name"])

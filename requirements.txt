@@ -1,2 +1,5 @@
+langchain
 langchain_openai
 python-dotenv
+streamlit
+watchdog
