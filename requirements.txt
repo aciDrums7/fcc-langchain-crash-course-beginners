@@ -6,3 +6,5 @@ python-dotenv
 streamlit
 watchdog
 wikipedia
+youtube-transcript-api
+faiss-cpu
