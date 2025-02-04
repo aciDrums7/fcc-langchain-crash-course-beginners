@@ -1,22 +1,19 @@
-from tempfile import template
-from langchain_openai import ChatOpenAI
+from langchain_openai import OpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain.chains import LLMChain
-from os import getenv
+from langchain_community.agent_toolkits.load_tools import load_tools
+from langchain.agents import initialize_agent, AgentType
 from dotenv import load_dotenv
 
 load_dotenv()
-MODEL = "meta-llama/llama-3.2-3b-instruct:free"
+# MODEL = "meta-llama/llama-3.2-3b-instruct:free"
+
+llm = OpenAI(
+    temperature=1,
+)
 
 
 def generate_pet_name(animal_type, pet_color):
-    llm = ChatOpenAI(
-        openai_api_key=getenv("OPENROUTER_API_KEY"),
-        openai_api_base=getenv("OPENROUTER_BASE_URL"),
-        model=MODEL,
-        temperature=1,
-    )
-
     prompt_template = PromptTemplate(
         input_variables=["animal_type", "pet_color"],
         template="I have a {animal_type} pet and I want a cool name for it, it is {pet_color} in color. Suggest me five cool names.",
@@ -28,5 +25,16 @@ def generate_pet_name(animal_type, pet_color):
     return response
 
 
+def langchain_agent():
+    tools = load_tools(["wikipedia", "llm-math"], llm=llm)
+    agent = initialize_agent(
+        tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True
+    )
+    result = agent.invoke("What is the average age of a dog? Multiply the age by 3")
+
+    return result
+
+
 if __name__ == "__main__":
-    print(generate_pet_name("dog", "blue"))
+    # print(generate_pet_name("dog", "blue"))
+    print(langchain_agent())
